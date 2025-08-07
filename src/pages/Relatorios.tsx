@@ -99,7 +99,7 @@ const Relatorios = () => {
                     <SelectValue placeholder="Todos" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     <SelectItem value="receita">Receitas</SelectItem>
                     <SelectItem value="despesa">Despesas</SelectItem>
                   </SelectContent>
@@ -118,7 +118,7 @@ const Relatorios = () => {
                     <SelectValue placeholder="Todas" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todas</SelectItem>
+                    <SelectItem value="all">Todas</SelectItem>
                     <SelectItem value="salario">Salário</SelectItem>
                     <SelectItem value="alimentacao">Alimentação</SelectItem>
                     <SelectItem value="transporte">Transporte</SelectItem>
