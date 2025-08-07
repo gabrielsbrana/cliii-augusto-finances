@@ -9,25 +9,25 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Financial App - Light theme colors */
-    --background: 215 28% 12%;
-    --foreground: 45 100% 88%;
+    --background: 217 33% 6%;
+    --foreground: 0 0% 96%;
 
-    --card: 215 25% 8%;
-    --card-foreground: 45 100% 95%;
+    --card: 217 33% 8%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 215 25% 8%;
-    --popover-foreground: 45 100% 95%;
+    --popover: 217 33% 8%;
+    --popover-foreground: 0 0% 96%;
 
-    --primary: 220 100% 55%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 218 100% 47%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 45 100% 70%;
+    --secondary: 45 100% 50%;
     --secondary-foreground: 0 0% 0%;
 
-    --muted: 215 25% 15%;
-    --muted-foreground: 45 50% 75%;
+    --muted: 217 33% 12%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 45 100% 60%;
+    --accent: 45 100% 50%;
     --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
@@ -39,49 +39,51 @@ All colors MUST be HSL.
     --warning: 35 100% 55%;
     --warning-foreground: 0 0% 0%;
 
-    --border: 215 25% 18%;
-    --input: 215 25% 18%;
-    --ring: 220 100% 55%;
+    --border: 217 33% 15%;
+    --input: 217 33% 12%;
+    --ring: 218 100% 47%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 215 30% 5%;
-    --sidebar-foreground: 45 100% 90%;
-    --sidebar-primary: 220 100% 55%;
+    --sidebar-background: 217 33% 4%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 218 100% 47%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 25% 12%;
-    --sidebar-accent-foreground: 45 100% 88%;
-    --sidebar-border: 215 25% 18%;
-    --sidebar-ring: 220 100% 55%;
+    --sidebar-accent: 217 33% 10%;
+    --sidebar-accent-foreground: 0 0% 88%;
+    --sidebar-border: 217 33% 15%;
+    --sidebar-ring: 218 100% 47%;
 
-    /* Financial specific variables */
-    --gradient-financial: linear-gradient(135deg, hsl(220 100% 55%), hsl(45 100% 60%));
-    --gradient-card: linear-gradient(145deg, hsl(215 25% 8%), hsl(215 25% 12%));
-    --shadow-card: 0 8px 32px hsla(220, 100%, 10%, 0.3);
-    --shadow-glow: 0 0 40px hsla(220, 100%, 55%, 0.2);
+    /* Enhanced financial gradients */
+    --gradient-financial: linear-gradient(135deg, hsl(218 100% 47%), hsl(45 100% 50%));
+    --gradient-card: linear-gradient(145deg, hsl(217 33% 8%), hsl(217 33% 12%));
+    --gradient-hero: linear-gradient(135deg, hsl(217 33% 6%) 0%, hsl(218 100% 47% / 0.1) 100%);
+    --shadow-card: 0 8px 32px hsla(218, 100%, 10%, 0.4);
+    --shadow-glow: 0 0 40px hsla(218, 100%, 47%, 0.3);
+    --shadow-elevated: 0 20px 60px hsla(218, 100%, 10%, 0.6);
   }
 
   .dark {
     /* Financial App - Dark theme (primary mode) */
-    --background: 215 28% 4%;
-    --foreground: 45 100% 95%;
+    --background: 217 33% 4%;
+    --foreground: 0 0% 96%;
 
-    --card: 215 25% 6%;
-    --card-foreground: 45 100% 95%;
+    --card: 217 33% 6%;
+    --card-foreground: 0 0% 96%;
 
-    --popover: 215 25% 6%;
-    --popover-foreground: 45 100% 95%;
+    --popover: 217 33% 6%;
+    --popover-foreground: 0 0% 96%;
 
-    --primary: 220 100% 60%;
+    --primary: 218 100% 50%;
     --primary-foreground: 0 0% 0%;
 
-    --secondary: 45 100% 65%;
+    --secondary: 45 100% 55%;
     --secondary-foreground: 0 0% 0%;
 
-    --muted: 215 25% 12%;
-    --muted-foreground: 45 40% 70%;
+    --muted: 217 33% 10%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 45 100% 65%;
+    --accent: 45 100% 55%;
     --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
@@ -93,24 +95,26 @@ All colors MUST be HSL.
     --warning: 35 100% 60%;
     --warning-foreground: 0 0% 0%;
 
-    --border: 215 25% 15%;
-    --input: 215 25% 12%;
-    --ring: 220 100% 60%;
+    --border: 217 33% 12%;
+    --input: 217 33% 10%;
+    --ring: 218 100% 50%;
 
-    --sidebar-background: 215 30% 3%;
-    --sidebar-foreground: 45 100% 92%;
-    --sidebar-primary: 220 100% 60%;
+    --sidebar-background: 217 33% 3%;
+    --sidebar-foreground: 0 0% 92%;
+    --sidebar-primary: 218 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 25% 8%;
-    --sidebar-accent-foreground: 45 100% 90%;
-    --sidebar-border: 215 25% 12%;
-    --sidebar-ring: 220 100% 60%;
+    --sidebar-accent: 217 33% 8%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 217 33% 12%;
+    --sidebar-ring: 218 100% 50%;
 
     /* Enhanced financial gradients for dark mode */
-    --gradient-financial: linear-gradient(135deg, hsl(220 100% 60%), hsl(45 100% 65%));
-    --gradient-card: linear-gradient(145deg, hsl(215 25% 6%), hsl(215 25% 10%));
-    --shadow-card: 0 8px 32px hsla(220, 100%, 5%, 0.4);
-    --shadow-glow: 0 0 40px hsla(220, 100%, 60%, 0.25);
+    --gradient-financial: linear-gradient(135deg, hsl(218 100% 50%), hsl(45 100% 55%));
+    --gradient-card: linear-gradient(145deg, hsl(217 33% 6%), hsl(217 33% 10%));
+    --gradient-hero: linear-gradient(135deg, hsl(217 33% 4%) 0%, hsl(218 100% 50% / 0.15) 100%);
+    --shadow-card: 0 8px 32px hsla(218, 100%, 5%, 0.5);
+    --shadow-glow: 0 0 40px hsla(218, 100% 50%, 0.35);
+    --shadow-elevated: 0 20px 60px hsla(218, 100%, 5%, 0.7);
   }
 }
 
@@ -121,6 +125,7 @@ All colors MUST be HSL.
 
   html {
     @apply dark;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -135,9 +140,79 @@ All colors MUST be HSL.
   .card-gradient {
     background: var(--gradient-card);
     box-shadow: var(--shadow-card);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-gradient:hover {
+    box-shadow: var(--shadow-elevated);
+    transform: translateY(-2px);
   }
 
   .glow-effect {
     box-shadow: var(--shadow-glow);
+  }
+
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+
+  /* Enhanced animations */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Micro-interactions */
+  .button-hover {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .button-hover:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .button-hover:active {
+    transform: translateY(0);
   }
 }
