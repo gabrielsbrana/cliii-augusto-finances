@@ -7,33 +7,81 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useCategorias } from "@/hooks/useCategorias";
+import { supabase } from "@/integrations/supabase/client";
 
 const Receitas = () => {
+  const { categorias, getCategoriasFlatList } = useCategorias('receita');
   const [formData, setFormData] = useState({
-    valor: "",
-    data: "",
-    categoria: "",
-    descricao: ""
+    descricao: "",
+    valor_bruto: "",
+    valor_liquido: "",
+    descontos: "",
+    tipo: "",
+    periodicidade: "",
+    data_recebimento: "",
+    categoria_id: "",
+    observacoes: "",
+    comprovante: null as File | null
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.valor || !formData.data || !formData.categoria) {
+    if (!formData.descricao || !formData.valor_bruto || !formData.data_recebimento || !formData.categoria_id) {
       toast.error("Preencha todos os campos obrigatórios");
       return;
     }
 
-    // Here you would save to database
-    toast.success("Receita adicionada com sucesso!");
-    
-    // Reset form
-    setFormData({
-      valor: "",
-      data: "",
-      categoria: "",
-      descricao: ""
-    });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+
+      let comprovante_url = null;
+      if (formData.comprovante) {
+        const fileExt = formData.comprovante.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('comprovantes')
+          .upload(fileName, formData.comprovante);
+
+        if (uploadError) throw uploadError;
+        comprovante_url = fileName;
+      }
+
+      const { error } = await supabase.from('receitas').insert([{
+        user_id: user.id,
+        descricao: formData.descricao,
+        valor_bruto: parseFloat(formData.valor_bruto),
+        valor_liquido: parseFloat(formData.valor_liquido),
+        descontos: parseFloat(formData.descontos) || 0,
+        tipo: formData.tipo,
+        periodicidade: formData.periodicidade,
+        data_recebimento: formData.data_recebimento,
+        categoria_id: formData.categoria_id,
+        observacoes: formData.observacoes,
+        comprovante_url
+      }]);
+
+      if (error) throw error;
+      
+      toast.success("Receita adicionada com sucesso!");
+      setFormData({
+        descricao: "",
+        valor_bruto: "",
+        valor_liquido: "",
+        descontos: "",
+        tipo: "",
+        periodicidade: "",
+        data_recebimento: "",
+        categoria_id: "",
+        observacoes: "",
+        comprovante: null
+      });
+    } catch (error: any) {
+      toast.error("Erro ao salvar receita: " + error.message);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
