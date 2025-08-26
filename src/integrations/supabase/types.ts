@@ -7,14 +7,193 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categorias: {
+        Row: {
+          ativa: boolean | null
+          categoria_pai_id: string | null
+          cor: string | null
+          created_at: string
+          icone: string | null
+          id: string
+          nome: string
+          tipo: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ativa?: boolean | null
+          categoria_pai_id?: string | null
+          cor?: string | null
+          created_at?: string
+          icone?: string | null
+          id?: string
+          nome: string
+          tipo: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ativa?: boolean | null
+          categoria_pai_id?: string | null
+          cor?: string | null
+          created_at?: string
+          icone?: string | null
+          id?: string
+          nome?: string
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "categorias_categoria_pai_id_fkey"
+            columns: ["categoria_pai_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      despesas: {
+        Row: {
+          categoria_id: string | null
+          comprovante_url: string | null
+          created_at: string
+          data_pagamento: string | null
+          data_vencimento: string
+          descricao: string
+          id: string
+          observacoes: string | null
+          periodicidade: string
+          proxima_data: string | null
+          recorrente: boolean | null
+          status: string | null
+          tags: string[] | null
+          tipo: string
+          updated_at: string
+          user_id: string
+          valor: number
+        }
+        Insert: {
+          categoria_id?: string | null
+          comprovante_url?: string | null
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento: string
+          descricao: string
+          id?: string
+          observacoes?: string | null
+          periodicidade: string
+          proxima_data?: string | null
+          recorrente?: boolean | null
+          status?: string | null
+          tags?: string[] | null
+          tipo: string
+          updated_at?: string
+          user_id: string
+          valor: number
+        }
+        Update: {
+          categoria_id?: string | null
+          comprovante_url?: string | null
+          created_at?: string
+          data_pagamento?: string | null
+          data_vencimento?: string
+          descricao?: string
+          id?: string
+          observacoes?: string | null
+          periodicidade?: string
+          proxima_data?: string | null
+          recorrente?: boolean | null
+          status?: string | null
+          tags?: string[] | null
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "despesas_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receitas: {
+        Row: {
+          categoria_id: string | null
+          comprovante_url: string | null
+          created_at: string
+          data_recebimento: string
+          descontos: number | null
+          descricao: string
+          id: string
+          observacoes: string | null
+          periodicidade: string
+          proxima_data: string | null
+          tags: string[] | null
+          tipo: string
+          updated_at: string
+          user_id: string
+          valor_bruto: number
+          valor_liquido: number
+        }
+        Insert: {
+          categoria_id?: string | null
+          comprovante_url?: string | null
+          created_at?: string
+          data_recebimento: string
+          descontos?: number | null
+          descricao: string
+          id?: string
+          observacoes?: string | null
+          periodicidade: string
+          proxima_data?: string | null
+          tags?: string[] | null
+          tipo: string
+          updated_at?: string
+          user_id: string
+          valor_bruto: number
+          valor_liquido: number
+        }
+        Update: {
+          categoria_id?: string | null
+          comprovante_url?: string | null
+          created_at?: string
+          data_recebimento?: string
+          descontos?: number | null
+          descricao?: string
+          id?: string
+          observacoes?: string | null
+          periodicidade?: string
+          proxima_data?: string | null
+          tags?: string[] | null
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+          valor_bruto?: number
+          valor_liquido?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receitas_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
