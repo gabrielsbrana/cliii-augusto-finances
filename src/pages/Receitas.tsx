@@ -109,67 +109,167 @@ const Receitas = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="descricao" className="text-card-foreground">
+                  Descrição *
+                </Label>
+                <Input
+                  id="descricao"
+                  placeholder="Descrição da receita"
+                  value={formData.descricao}
+                  onChange={(e) => handleInputChange("descricao", e.target.value)}
+                  className="bg-input border-border"
+                />
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-3">
                 <div className="space-y-2">
-                  <Label htmlFor="valor" className="text-card-foreground">
-                    Valor *
+                  <Label htmlFor="valor_bruto" className="text-card-foreground">
+                    Valor Bruto *
                   </Label>
                   <Input
-                    id="valor"
+                    id="valor_bruto"
                     type="number"
                     step="0.01"
                     placeholder="0,00"
-                    value={formData.valor}
-                    onChange={(e) => handleInputChange("valor", e.target.value)}
+                    value={formData.valor_bruto}
+                    onChange={(e) => handleInputChange("valor_bruto", e.target.value)}
                     className="bg-input border-border"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="data" className="text-card-foreground">
-                    Data *
+                  <Label htmlFor="descontos" className="text-card-foreground">
+                    Descontos
                   </Label>
                   <Input
-                    id="data"
-                    type="date"
-                    value={formData.data}
-                    onChange={(e) => handleInputChange("data", e.target.value)}
+                    id="descontos"
+                    type="number"
+                    step="0.01"
+                    placeholder="0,00"
+                    value={formData.descontos}
+                    onChange={(e) => handleInputChange("descontos", e.target.value)}
+                    className="bg-input border-border"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="valor_liquido" className="text-card-foreground">
+                    Valor Líquido *
+                  </Label>
+                  <Input
+                    id="valor_liquido"
+                    type="number"
+                    step="0.01"
+                    placeholder="0,00"
+                    value={formData.valor_liquido}
+                    onChange={(e) => handleInputChange("valor_liquido", e.target.value)}
                     className="bg-input border-border"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-card-foreground">
-                  Categoria *
-                </Label>
-                <Select 
-                  value={formData.categoria} 
-                  onValueChange={(value) => handleInputChange("categoria", value)}
-                >
-                  <SelectTrigger className="bg-input border-border">
-                    <SelectValue placeholder="Selecione uma categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="salario">Salário</SelectItem>
-                    <SelectItem value="freelance">Freelance</SelectItem>
-                    <SelectItem value="investimento">Investimento</SelectItem>
-                    <SelectItem value="bonus">Bônus</SelectItem>
-                    <SelectItem value="extra">Renda Extra</SelectItem>
-                    <SelectItem value="outros">Outros</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label className="text-card-foreground">
+                    Tipo *
+                  </Label>
+                  <Select 
+                    value={formData.tipo} 
+                    onValueChange={(value) => handleInputChange("tipo", value)}
+                  >
+                    <SelectTrigger className="bg-input border-border">
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="fixa">Fixa</SelectItem>
+                      <SelectItem value="variavel">Variável</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-card-foreground">
+                    Periodicidade *
+                  </Label>
+                  <Select 
+                    value={formData.periodicidade} 
+                    onValueChange={(value) => handleInputChange("periodicidade", value)}
+                  >
+                    <SelectTrigger className="bg-input border-border">
+                      <SelectValue placeholder="Selecione a periodicidade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unica">Única</SelectItem>
+                      <SelectItem value="mensal">Mensal</SelectItem>
+                      <SelectItem value="quinzenal">Quinzenal</SelectItem>
+                      <SelectItem value="anual">Anual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="data_recebimento" className="text-card-foreground">
+                    Data de Recebimento *
+                  </Label>
+                  <Input
+                    id="data_recebimento"
+                    type="date"
+                    value={formData.data_recebimento}
+                    onChange={(e) => handleInputChange("data_recebimento", e.target.value)}
+                    className="bg-input border-border"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-card-foreground">
+                    Categoria *
+                  </Label>
+                  <Select 
+                    value={formData.categoria_id} 
+                    onValueChange={(value) => handleInputChange("categoria_id", value)}
+                  >
+                    <SelectTrigger className="bg-input border-border">
+                      <SelectValue placeholder="Selecione uma categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getCategoriasFlatList().map((categoria) => (
+                        <SelectItem key={categoria.id} value={categoria.id}>
+                          {"  ".repeat(categoria.nivel) + categoria.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="descricao" className="text-card-foreground">
-                  Descrição
+                <Label htmlFor="comprovante" className="text-card-foreground">
+                  Comprovante
+                </Label>
+                <Input
+                  id="comprovante"
+                  type="file"
+                  accept="image/*,.pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null;
+                    setFormData(prev => ({ ...prev, comprovante: file }));
+                  }}
+                  className="bg-input border-border"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="observacoes" className="text-card-foreground">
+                  Observações
                 </Label>
                 <Textarea
-                  id="descricao"
-                  placeholder="Descrição opcional da receita"
-                  value={formData.descricao}
-                  onChange={(e) => handleInputChange("descricao", e.target.value)}
+                  id="observacoes"
+                  placeholder="Observações adicionais"
+                  value={formData.observacoes}
+                  onChange={(e) => handleInputChange("observacoes", e.target.value)}
                   className="bg-input border-border min-h-[100px]"
                 />
               </div>
@@ -184,7 +284,18 @@ const Receitas = () => {
                 <Button 
                   type="button" 
                   variant="outline"
-                  onClick={() => setFormData({ valor: "", data: "", categoria: "", descricao: "" })}
+                  onClick={() => setFormData({ 
+                    descricao: "",
+                    valor_bruto: "",
+                    valor_liquido: "",
+                    descontos: "",
+                    tipo: "",
+                    periodicidade: "",
+                    data_recebimento: "",
+                    categoria_id: "",
+                    observacoes: "",
+                    comprovante: null
+                  })}
                 >
                   Limpar
                 </Button>
