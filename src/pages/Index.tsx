@@ -3,14 +3,22 @@ import { StatsCard } from "@/components/Dashboard/StatsCard";
 import { ExpenseChart } from "@/components/Dashboard/ExpenseChart";
 import { FinancialChart } from "@/components/Dashboard/FinancialChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, TrendingUp, TrendingDown, AlertTriangle } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, AlertTriangle, CreditCard } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useDebts } from "@/hooks/useDebts";
 
 const Index = () => {
+  const { debts } = useDebts();
   const saldoAtual = 15800;
   const receitasMes = 6000;
   const despesasMes = 4200;
   const hasSaldoNegativo = despesasMes > receitasMes;
+  
+  // Calculate debt summary
+  const activeDebts = debts.filter(debt => debt.status === 'ativo');
+  const totalDebtAmount = activeDebts.reduce((sum, debt) => sum + debt.valor_contratado, 0);
+  const monthlyDebtPayment = activeDebts.reduce((sum, debt) => sum + debt.valor_parcela, 0);
+  const hasActiveDebts = activeDebts.length > 0;
 
   return (
     <Layout>
@@ -35,6 +43,16 @@ const Index = () => {
           </Alert>
         )}
 
+        {/* Alert for active debts */}
+        {hasActiveDebts && (
+          <Alert className="border-destructive bg-destructive/10 animate-slide-up">
+            <CreditCard className="h-4 w-4 text-destructive" />
+            <AlertDescription className="text-destructive">
+              Você possui {activeDebts.length} dívida(s) ativa(s). Saldo devedor total: R$ {totalDebtAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Consultor Recomenda */}
         <Card className="card-gradient animate-scale-in">
           <CardHeader>
@@ -54,7 +72,7 @@ const Index = () => {
         </Card>
 
         {/* Stats Cards */}
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-4">
           <StatsCard
             title="Saldo Atual"
             value={`R$ ${saldoAtual.toLocaleString()}`}
@@ -73,6 +91,13 @@ const Index = () => {
             title="Despesas do Mês"
             value={`R$ ${despesasMes.toLocaleString()}`}
             icon={TrendingDown}
+            trend="down"
+            className="animate-scale-in"
+          />
+          <StatsCard
+            title="Saldo Devedor"
+            value={`R$ ${totalDebtAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+            icon={CreditCard}
             trend="down"
             className="animate-scale-in"
           />

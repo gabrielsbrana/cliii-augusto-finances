@@ -61,6 +61,89 @@ export type Database = {
           },
         ]
       }
+      debt_payments: {
+        Row: {
+          created_at: string
+          data_pagamento: string
+          debt_id: string
+          id: string
+          status: string
+          updated_at: string
+          valor_pago: number
+        }
+        Insert: {
+          created_at?: string
+          data_pagamento: string
+          debt_id: string
+          id?: string
+          status?: string
+          updated_at?: string
+          valor_pago: number
+        }
+        Update: {
+          created_at?: string
+          data_pagamento?: string
+          debt_id?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          valor_pago?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "debt_payments_debt_id_fkey"
+            columns: ["debt_id"]
+            isOneToOne: false
+            referencedRelation: "debts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      debts: {
+        Row: {
+          created_at: string
+          id: string
+          instituicao: string
+          juros_a_mensal: number
+          observacoes: string | null
+          parcelas_totais: number
+          status: string
+          tipo: string
+          updated_at: string
+          user_id: string
+          valor_contratado: number
+          valor_parcela: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          instituicao: string
+          juros_a_mensal?: number
+          observacoes?: string | null
+          parcelas_totais: number
+          status?: string
+          tipo: string
+          updated_at?: string
+          user_id: string
+          valor_contratado: number
+          valor_parcela: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          instituicao?: string
+          juros_a_mensal?: number
+          observacoes?: string | null
+          parcelas_totais?: number
+          status?: string
+          tipo?: string
+          updated_at?: string
+          user_id?: string
+          valor_contratado?: number
+          valor_parcela?: number
+        }
+        Relationships: []
+      }
       despesas: {
         Row: {
           categoria_id: string | null

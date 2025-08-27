@@ -10,6 +10,7 @@ import Metas from "./pages/Metas";
 import Relatorios from "./pages/Relatorios";
 import Dicas from "./pages/Dicas";
 import Perfil from "./pages/Perfil";
+import Dividas from "./pages/Dividas";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/relatorios" element={<Relatorios />} />
           <Route path="/dicas" element={<Dicas />} />
           <Route path="/perfil" element={<Perfil />} />
+          <Route path="/dividas" element={<Dividas />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
