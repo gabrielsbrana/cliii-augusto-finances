@@ -45,8 +45,8 @@ const Despesas = () => {
 
   return (
     <Layout>
-      <div className="max-w-2xl">
-        <div className="mb-8">
+      <div className="min-h-[calc(100vh-8rem)] w-full max-w-6xl mx-auto">
+        <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Nova Despesa
           </h1>
@@ -55,84 +55,90 @@ const Despesas = () => {
           </p>
         </div>
 
-        <Card className="card-gradient">
-          <CardHeader>
+        <Card className="card-gradient min-h-[calc(100vh-16rem)] border-border/50 shadow-card">
+          <CardHeader className="border-b border-border/30">
             <CardTitle className="text-card-foreground">Dados da Despesa</CardTitle>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="valor" className="text-card-foreground">
-                    Valor *
-                  </Label>
-                  <Input
-                    id="valor"
-                    type="number"
-                    step="0.01"
-                    placeholder="0,00"
-                    value={formData.valor}
-                    onChange={(e) => handleInputChange("valor", e.target.value)}
-                    className="bg-input border-border"
-                  />
+          <CardContent className="relative h-full p-8">
+            <form onSubmit={handleSubmit} className="h-full flex flex-col">
+              {/* Grid principal - 2 colunas em desktop */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1">
+                {/* Coluna esquerda - Valor e Data */}
+                <div className="space-y-6 border-r-0 lg:border-r border-border/30 pr-0 lg:pr-8">
+                  <div className="space-y-3">
+                    <Label htmlFor="valor" className="text-card-foreground font-medium text-base">
+                      Valor *
+                    </Label>
+                    <Input
+                      id="valor"
+                      type="number"
+                      step="0.01"
+                      placeholder="0,00"
+                      value={formData.valor}
+                      onChange={(e) => handleInputChange("valor", e.target.value)}
+                      className="bg-input border-border h-12 text-lg font-mono"
+                    />
+                  </div>
+
+                  <div className="space-y-3 pb-6 border-b border-border/20">
+                    <Label htmlFor="data" className="text-card-foreground font-medium text-base">
+                      Data *
+                    </Label>
+                    <Input
+                      id="data"
+                      type="date"
+                      value={formData.data}
+                      onChange={(e) => handleInputChange("data", e.target.value)}
+                      className="bg-input border-border h-12"
+                    />
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-card-foreground font-medium text-base">
+                      Categoria *
+                    </Label>
+                    <Select 
+                      value={formData.categoria} 
+                      onValueChange={(value) => handleInputChange("categoria", value)}
+                    >
+                      <SelectTrigger className="bg-input border-border h-12">
+                        <SelectValue placeholder="Selecione uma categoria" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="alimentacao">Alimentação</SelectItem>
+                        <SelectItem value="transporte">Transporte</SelectItem>
+                        <SelectItem value="saude">Saúde</SelectItem>
+                        <SelectItem value="educacao">Educação</SelectItem>
+                        <SelectItem value="lazer">Lazer</SelectItem>
+                        <SelectItem value="moradia">Moradia</SelectItem>
+                        <SelectItem value="vestuario">Vestuário</SelectItem>
+                        <SelectItem value="tecnologia">Tecnologia</SelectItem>
+                        <SelectItem value="outros">Outros</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="data" className="text-card-foreground">
-                    Data *
+                {/* Coluna direita - Descrição expandida */}
+                <div className="space-y-3 flex flex-col">
+                  <Label htmlFor="descricao" className="text-card-foreground font-medium text-base">
+                    Descrição
                   </Label>
-                  <Input
-                    id="data"
-                    type="date"
-                    value={formData.data}
-                    onChange={(e) => handleInputChange("data", e.target.value)}
-                    className="bg-input border-border"
+                  <Textarea
+                    id="descricao"
+                    placeholder="Adicione uma descrição detalhada da despesa, como local, motivo, ou qualquer observação relevante..."
+                    value={formData.descricao}
+                    onChange={(e) => handleInputChange("descricao", e.target.value)}
+                    className="bg-input border-border flex-1 min-h-[300px] lg:min-h-[400px] resize-none"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-card-foreground">
-                  Categoria *
-                </Label>
-                <Select 
-                  value={formData.categoria} 
-                  onValueChange={(value) => handleInputChange("categoria", value)}
-                >
-                  <SelectTrigger className="bg-input border-border">
-                    <SelectValue placeholder="Selecione uma categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="alimentacao">Alimentação</SelectItem>
-                    <SelectItem value="transporte">Transporte</SelectItem>
-                    <SelectItem value="saude">Saúde</SelectItem>
-                    <SelectItem value="educacao">Educação</SelectItem>
-                    <SelectItem value="lazer">Lazer</SelectItem>
-                    <SelectItem value="moradia">Moradia</SelectItem>
-                    <SelectItem value="vestuario">Vestuário</SelectItem>
-                    <SelectItem value="tecnologia">Tecnologia</SelectItem>
-                    <SelectItem value="outros">Outros</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="descricao" className="text-card-foreground">
-                  Descrição
-                </Label>
-                <Textarea
-                  id="descricao"
-                  placeholder="Descrição opcional da despesa"
-                  value={formData.descricao}
-                  onChange={(e) => handleInputChange("descricao", e.target.value)}
-                  className="bg-input border-border min-h-[100px]"
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
+              {/* Área de botões - fixada na parte inferior */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-8 mt-8 border-t border-border/30">
                 <Button 
                   type="submit" 
-                  className="financial-gradient text-black font-semibold hover:opacity-90"
+                  className="financial-gradient text-black font-semibold hover:opacity-90 h-12 flex-1 sm:flex-none sm:ml-auto sm:min-w-[200px]"
                 >
                   Adicionar Despesa
                 </Button>
@@ -140,6 +146,7 @@ const Despesas = () => {
                   type="button" 
                   variant="outline"
                   onClick={() => setFormData({ valor: "", data: "", categoria: "", descricao: "" })}
+                  className="h-12 sm:min-w-[120px]"
                 >
                   Limpar
                 </Button>
