@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Receitas from "./pages/Receitas";
 import Despesas from "./pages/Despesas";
 import Metas from "./pages/Metas";
+import PlanejamentoOrcamental from "./pages/PlanejamentoOrcamental";
 import Relatorios from "./pages/Relatorios";
 import Dicas from "./pages/Dicas";
 import Perfil from "./pages/Perfil";
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/receitas" element={<Receitas />} />
           <Route path="/despesas" element={<Despesas />} />
           <Route path="/metas" element={<Metas />} />
+          <Route path="/planejamento" element={<PlanejamentoOrcamental />} />
           <Route path="/relatorios" element={<Relatorios />} />
           <Route path="/dicas" element={<Dicas />} />
           <Route path="/perfil" element={<Perfil />} />

@@ -33,6 +33,11 @@ const navigationItems = [
     icon: Target,
   },
   {
+    title: "Planejamento Orçamental",
+    url: "/planejamento",
+    icon: Target,
+  },
+  {
     title: "Dívidas",
     url: "/dividas",
     icon: CreditCard,
