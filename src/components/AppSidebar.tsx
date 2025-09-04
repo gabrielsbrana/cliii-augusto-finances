@@ -1,4 +1,4 @@
-import { Home, TrendingUp, TrendingDown, FileText, LogOut, Target, BookOpen, User, CreditCard } from "lucide-react";
+import { Home, TrendingUp, TrendingDown, FileText, LogOut, Target, BookOpen, User, CreditCard, Zap } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -41,6 +41,11 @@ const navigationItems = [
     title: "Dívidas",
     url: "/dividas",
     icon: CreditCard,
+  },
+  {
+    title: "Quick Tap",
+    url: "/quick-tap",
+    icon: Zap,
   },
   {
     title: "Relatórios",

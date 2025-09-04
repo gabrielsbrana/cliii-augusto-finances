@@ -12,6 +12,7 @@ import Relatorios from "./pages/Relatorios";
 import Dicas from "./pages/Dicas";
 import Perfil from "./pages/Perfil";
 import Dividas from "./pages/Dividas";
+import SoicQuickTap from "./pages/SoicQuickTap";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/dicas" element={<Dicas />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/dividas" element={<Dividas />} />
+          <Route path="/quick-tap" element={<SoicQuickTap />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
