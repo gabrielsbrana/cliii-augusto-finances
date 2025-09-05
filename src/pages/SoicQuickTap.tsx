@@ -79,21 +79,41 @@ export default function SoicQuickTap() {
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
   const { toast } = useToast();
 
-  // Generate days for the spreadsheet
-  const getDaysArray = () => {
-    const days = [];
-    const start = new Date(currentWeekStart);
-    const daysToShow = timeFilter === "week" ? 7 : 14;
+  // Generate weeks structure for the spreadsheet
+  const getWeeksArray = () => {
+    const weeks = [];
+    const weeksToShow = timeFilter === "week" ? 1 : timeFilter === "2weeks" ? 2 : 4;
     
-    for (let i = 0; i < daysToShow; i++) {
-      const date = new Date(start);
-      date.setDate(start.getDate() + i);
-      days.push(date);
+    for (let weekIndex = 0; weekIndex < weeksToShow; weekIndex++) {
+      const weekStart = new Date(currentWeekStart);
+      weekStart.setDate(currentWeekStart.getDate() + (weekIndex * 7));
+      
+      // Adjust to start on Monday
+      const dayOfWeek = weekStart.getDay();
+      const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // Sunday = 0, Monday = 1
+      weekStart.setDate(weekStart.getDate() + diff);
+      
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      
+      const days = [];
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + i);
+        days.push(date);
+      }
+      
+      weeks.push({
+        weekNumber: weekIndex + 1,
+        startDate: weekStart,
+        endDate: weekEnd,
+        days
+      });
     }
-    return days;
+    return weeks;
   };
 
-  const days = getDaysArray();
+  const weeks = getWeeksArray();
 
   // Calculate total spent for a category/subcategory on a specific day
   const getDayTotal = (category: string, subcategory: string, date: Date) => {
@@ -241,86 +261,102 @@ export default function SoicQuickTap() {
                   <ScrollArea className="w-full">
                     <div className="min-w-[800px]">
                       
-                      {/* Table Header */}
-                      <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(100px,1fr))] border-b bg-muted/30">
-                        <div className="p-3 font-medium text-sm">Categoria / Subcategoria</div>
-                        {days.map((day, index) => (
-                          <div key={index} className="p-3 text-center font-medium text-sm border-l">
-                            {formatDate(day)}
+                      {/* Week Headers */}
+                      {weeks.map((week) => (
+                        <div key={week.weekNumber} className="mb-4">
+                          <div className="bg-primary/5 p-2 border-b-2 border-primary/20">
+                            <h3 className="text-sm font-semibold text-primary text-center">
+                              Semana {week.weekNumber} ({week.startDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} a {week.endDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })})
+                            </h3>
                           </div>
-                        ))}
-                      </div>
-
-                      {/* Table Body */}
-                      {categories.map((category) => (
-                        <div key={category.name}>
                           
-                          {/* Category Row */}
-                          <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(100px,1fr))] border-b hover:bg-muted/20">
-                            <div 
-                              className="p-3 flex items-center gap-2 cursor-pointer font-medium bg-muted/50"
-                              onClick={() => toggleCategory(category.name)}
-                            >
-                              <category.icon className="w-4 h-4" />
-                              <span>{category.name}</span>
-                              {category.expanded ? 
-                                <ChevronUp className="w-4 h-4 ml-auto" /> : 
-                                <ChevronDown className="w-4 h-4 ml-auto" />
-                              }
-                            </div>
-                            {days.map((day, index) => {
-                              const dayTotal = category.subcategories.reduce((sum, sub) => 
-                                sum + getDayTotal(category.name, sub, day), 0);
-                              return (
-                                <div key={index} className="p-3 text-center border-l bg-muted/50">
-                                  {dayTotal > 0 && (
-                                    <span className="text-sm font-medium">
-                                      R$ {dayTotal.toFixed(0)}
-                                    </span>
-                                  )}
+                          {/* Days Header */}
+                          <div className="grid grid-cols-[200px_repeat(7,1fr)] border-b bg-muted/30">
+                            <div className="p-3 font-medium text-sm">Categoria / Subcategoria</div>
+                            {week.days.map((day, index) => (
+                              <div key={index} className="p-3 text-center font-medium text-sm border-l">
+                                <div className="text-xs text-muted-foreground">
+                                  {day.toLocaleDateString('pt-BR', { weekday: 'short' })}
                                 </div>
-                              );
-                            })}
+                                <div className="text-sm">
+                                  {day.getDate().toString().padStart(2, '0')}/{(day.getMonth() + 1).toString().padStart(2, '0')}
+                                </div>
+                              </div>
+                            ))}
                           </div>
 
-                          {/* Subcategory Rows */}
-                          {category.expanded && category.subcategories.map((subcategory) => (
-                            <div key={subcategory} className="grid grid-cols-[200px_repeat(auto-fit,minmax(100px,1fr))] border-b hover:bg-muted/10">
-                              <div className="p-3 pl-8 text-sm text-muted-foreground">
-                                {subcategory}
+                          {/* Categories for this week */}
+                          {categories.map((category) => (
+                            <div key={category.name}>
+                              
+                              {/* Category Row */}
+                              <div className="grid grid-cols-[200px_repeat(7,1fr)] border-b hover:bg-muted/20">
+                                <div 
+                                  className="p-3 flex items-center gap-2 cursor-pointer font-medium bg-muted/50"
+                                  onClick={() => toggleCategory(category.name)}
+                                >
+                                  <category.icon className="w-4 h-4" />
+                                  <span>{category.name}</span>
+                                  {category.expanded ? 
+                                    <ChevronUp className="w-4 h-4 ml-auto" /> : 
+                                    <ChevronDown className="w-4 h-4 ml-auto" />
+                                  }
+                                </div>
+                                {week.days.map((day, index) => {
+                                  const dayTotal = category.subcategories.reduce((sum, sub) => 
+                                    sum + getDayTotal(category.name, sub, day), 0);
+                                  return (
+                                    <div key={index} className="p-3 text-center border-l bg-muted/50">
+                                      {dayTotal > 0 && (
+                                        <span className="text-sm font-medium">
+                                          R$ {dayTotal.toFixed(0)}
+                                        </span>
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </div>
-                              {days.map((day, index) => {
-                                const dayTotal = getDayTotal(category.name, subcategory, day);
-                                return (
-                                  <div key={index} className="p-2 border-l">
-                                    <Input
-                                      type="number"
-                                      placeholder="0"
-                                      className="h-8 text-center text-sm"
-                                      onBlur={(e) => {
-                                        if (e.target.value) {
-                                          handleExpenseInput(category.name, subcategory, day, e.target.value);
-                                          e.target.value = '';
-                                        }
-                                      }}
-                                      onKeyPress={(e) => {
-                                        if (e.key === 'Enter') {
-                                          const target = e.target as HTMLInputElement;
-                                          if (target.value) {
-                                            handleExpenseInput(category.name, subcategory, day, target.value);
-                                            target.value = '';
-                                          }
-                                        }
-                                      }}
-                                    />
-                                    {dayTotal > 0 && (
-                                      <div className="text-xs text-center mt-1 text-muted-foreground">
-                                        R$ {dayTotal.toFixed(2)}
-                                      </div>
-                                    )}
+
+                              {/* Subcategory Rows */}
+                              {category.expanded && category.subcategories.map((subcategory) => (
+                                <div key={subcategory} className="grid grid-cols-[200px_repeat(7,1fr)] border-b hover:bg-muted/10">
+                                  <div className="p-3 pl-8 text-sm text-muted-foreground">
+                                    {subcategory}
                                   </div>
-                                );
-                              })}
+                                  {week.days.map((day, index) => {
+                                    const dayTotal = getDayTotal(category.name, subcategory, day);
+                                    return (
+                                      <div key={index} className="p-2 border-l">
+                                        <Input
+                                          type="number"
+                                          placeholder="0"
+                                          className="h-8 text-center text-sm"
+                                          onBlur={(e) => {
+                                            if (e.target.value) {
+                                              handleExpenseInput(category.name, subcategory, day, e.target.value);
+                                              e.target.value = '';
+                                            }
+                                          }}
+                                          onKeyPress={(e) => {
+                                            if (e.key === 'Enter') {
+                                              const target = e.target as HTMLInputElement;
+                                              if (target.value) {
+                                                handleExpenseInput(category.name, subcategory, day, target.value);
+                                                target.value = '';
+                                              }
+                                            }
+                                          }}
+                                        />
+                                        {dayTotal > 0 && (
+                                          <div className="text-xs text-center mt-1 text-muted-foreground">
+                                            R$ {dayTotal.toFixed(2)}
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              ))}
                             </div>
                           ))}
                         </div>
