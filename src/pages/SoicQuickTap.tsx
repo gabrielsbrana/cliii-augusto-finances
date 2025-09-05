@@ -4,296 +4,398 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Droplets, 
-  Zap, 
-  Wifi, 
-  ShoppingCart, 
-  Car, 
-  Home, 
-  Pill, 
-  UtensilsCrossed,
   Utensils,
   Building,
   Bus,
-  Receipt,
   Heart,
   Gamepad2,
-  GraduationCap,
-  CreditCard,
-  MoreHorizontal,
-  Clock
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  Calendar,
+  Filter,
+  AlertTriangle,
+  CheckCircle,
+  AlertCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const quickButtons = [
-  { label: "Água", icon: Droplets, category: "Contas", value: "15.00" },
-  { label: "Luz", icon: Zap, category: "Contas", value: "120.00" },
-  { label: "Internet", icon: Wifi, category: "Contas", value: "80.00" },
-  { label: "Mercado", icon: ShoppingCart, category: "Alimentação", value: "150.00" },
-  { label: "Uber", icon: Car, category: "Transporte", value: "25.00" },
-  { label: "Aluguel", icon: Home, category: "Moradia", value: "1200.00" },
-  { label: "Farmácia", icon: Pill, category: "Saúde", value: "45.00" },
-  { label: "Restaurante", icon: UtensilsCrossed, category: "Alimentação", value: "65.00" }
+const categoriesData = [
+  { 
+    name: "Alimentação", 
+    icon: Utensils, 
+    subcategories: ["Mercado", "Restaurante", "Água", "Delivery"],
+    meta: 800,
+    expanded: true
+  },
+  { 
+    name: "Moradia", 
+    icon: Building, 
+    subcategories: ["Aluguel", "Condomínio", "Energia", "Água/Esgoto"],
+    meta: 1500,
+    expanded: true
+  },
+  { 
+    name: "Transporte", 
+    icon: Bus, 
+    subcategories: ["Combustível", "Uber/Taxi", "Transporte Público", "Manutenção"],
+    meta: 400,
+    expanded: false
+  },
+  { 
+    name: "Saúde", 
+    icon: Heart, 
+    subcategories: ["Farmácia", "Médico", "Plano de Saúde", "Exames"],
+    meta: 300,
+    expanded: false
+  },
+  { 
+    name: "Lazer", 
+    icon: Gamepad2, 
+    subcategories: ["Cinema", "Streaming", "Restaurantes", "Viagens"],
+    meta: 250,
+    expanded: false
+  }
 ];
 
-const categories = [
-  { name: "Alimentação", icon: Utensils, color: "bg-green-100 text-green-700 border-green-200" },
-  { name: "Moradia", icon: Building, color: "bg-blue-100 text-blue-700 border-blue-200" },
-  { name: "Transporte", icon: Bus, color: "bg-purple-100 text-purple-700 border-purple-200" },
-  { name: "Contas", icon: Receipt, color: "bg-orange-100 text-orange-700 border-orange-200" },
-  { name: "Saúde", icon: Heart, color: "bg-red-100 text-red-700 border-red-200" },
-  { name: "Lazer", icon: Gamepad2, color: "bg-pink-100 text-pink-700 border-pink-200" },
-  { name: "Educação", icon: GraduationCap, color: "bg-indigo-100 text-indigo-700 border-indigo-200" },
-  { name: "Dívidas", icon: CreditCard, color: "bg-gray-100 text-gray-700 border-gray-200" },
-  { name: "Outros", icon: MoreHorizontal, color: "bg-slate-100 text-slate-700 border-slate-200" }
-];
-
-interface Lancamento {
+interface ExpenseEntry {
   id: string;
-  descricao: string;
-  valor: number;
-  categoria: string;
-  data: Date;
+  category: string;
+  subcategory: string;
+  value: number;
+  date: Date;
 }
 
 export default function SoicQuickTap() {
-  const [descricao, setDescricao] = useState("");
-  const [valor, setValor] = useState("");
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState("");
-  const [categoriaSugerida, setCategoriaSugerida] = useState("");
-  const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
+  const [timeFilter, setTimeFilter] = useState("2weeks");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [expenses, setExpenses] = useState<ExpenseEntry[]>([]);
+  const [categories, setCategories] = useState(categoriesData);
+  const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
   const { toast } = useToast();
 
-  // Sugestão automática de categoria baseada na descrição
-  useEffect(() => {
-    const texto = descricao.toLowerCase();
+  // Generate days for the spreadsheet
+  const getDaysArray = () => {
+    const days = [];
+    const start = new Date(currentWeekStart);
+    const daysToShow = timeFilter === "week" ? 7 : 14;
     
-    const sugestoes = {
-      "água": "Contas",
-      "luz": "Contas",
-      "internet": "Contas",
-      "mercado": "Alimentação",
-      "uber": "Transporte",
-      "aluguel": "Moradia",
-      "farmácia": "Saúde",
-      "restaurante": "Alimentação",
-      "comida": "Alimentação",
-      "gasolina": "Transporte",
-      "médico": "Saúde",
-      "cinema": "Lazer",
-      "curso": "Educação"
-    };
-
-    for (const [palavra, categoria] of Object.entries(sugestoes)) {
-      if (texto.includes(palavra)) {
-        setCategoriaSugerida(categoria);
-        if (!categoriaSelecionada) {
-          setCategoriaSelecionada(categoria);
-        }
-        return;
-      }
+    for (let i = 0; i < daysToShow; i++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + i);
+      days.push(date);
     }
-    
-    if (!categoriaSelecionada) {
-      setCategoriaSugerida("");
-    }
-  }, [descricao, categoriaSelecionada]);
-
-  const handleQuickButton = (button: typeof quickButtons[0]) => {
-    setDescricao(button.label);
-    setValor(button.value);
-    setCategoriaSelecionada(button.category);
+    return days;
   };
 
-  const handleSalvar = () => {
-    if (!descricao || !valor || !categoriaSelecionada) {
-      toast({
-        title: "Campos obrigatórios",
-        description: "Preencha descrição, valor e categoria.",
-        variant: "destructive"
-      });
-      return;
-    }
+  const days = getDaysArray();
 
-    const novoLancamento: Lancamento = {
+  // Calculate total spent for a category/subcategory on a specific day
+  const getDayTotal = (category: string, subcategory: string, date: Date) => {
+    return expenses
+      .filter(expense => 
+        expense.category === category &&
+        expense.subcategory === subcategory &&
+        expense.date.toDateString() === date.toDateString()
+      )
+      .reduce((sum, expense) => sum + expense.value, 0);
+  };
+
+  // Calculate category totals and percentages
+  const getCategoryStats = (categoryName: string) => {
+    const category = categories.find(cat => cat.name === categoryName);
+    if (!category) return { total: 0, percentage: 0, status: 'ok' };
+
+    const total = expenses
+      .filter(expense => expense.category === categoryName)
+      .reduce((sum, expense) => sum + expense.value, 0);
+
+    const percentage = (total / category.meta) * 100;
+    
+    let status = 'ok';
+    if (percentage >= 100) status = 'danger';
+    else if (percentage >= 80) status = 'warning';
+
+    return { total, percentage, status };
+  };
+
+  // Handle expense input
+  const handleExpenseInput = (category: string, subcategory: string, date: Date, value: string) => {
+    const numValue = parseFloat(value) || 0;
+    if (numValue <= 0) return;
+
+    const newExpense: ExpenseEntry = {
       id: Date.now().toString(),
-      descricao,
-      valor: parseFloat(valor.replace(",", ".")),
-      categoria: categoriaSelecionada,
-      data: new Date()
+      category,
+      subcategory,
+      value: numValue,
+      date: new Date(date)
     };
 
-    setLancamentos(prev => [novoLancamento, ...prev.slice(0, 9)]);
+    setExpenses(prev => [...prev, newExpense]);
     
-    // Limpar campos
-    setDescricao("");
-    setValor("");
-    setCategoriaSelecionada("");
-    setCategoriaSugerida("");
-
     toast({
-      title: "Lançamento salvo!",
-      description: `${descricao} - R$ ${valor}`,
+      title: "Despesa registrada",
+      description: `${subcategory}: R$ ${numValue.toFixed(2)}`,
       className: "bg-green-50 border-green-200"
     });
   };
 
-  const getCategoryIcon = (categoryName: string) => {
-    const category = categories.find(cat => cat.name === categoryName);
-    return category ? category.icon : MoreHorizontal;
+  // Toggle category expansion
+  const toggleCategory = (categoryName: string) => {
+    setCategories(prev => prev.map(cat => 
+      cat.name === categoryName 
+        ? { ...cat, expanded: !cat.expanded }
+        : cat
+    ));
+  };
+
+  // Navigation functions
+  const navigateWeek = (direction: 'prev' | 'next') => {
+    const daysToMove = timeFilter === "week" ? 7 : 14;
+    setCurrentWeekStart(prev => {
+      const newDate = new Date(prev);
+      newDate.setDate(prev.getDate() + (direction === 'next' ? daysToMove : -daysToMove));
+      return newDate;
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('pt-BR', { 
+      weekday: 'short', 
+      day: '2-digit',
+      month: '2-digit'
+    });
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'danger': return <AlertTriangle className="w-4 h-4 text-red-500" />;
+      case 'warning': return <AlertCircle className="w-4 h-4 text-yellow-500" />;
+      default: return <CheckCircle className="w-4 h-4 text-green-500" />;
+    }
   };
 
   return (
     <Layout>
       <div className="min-h-[calc(100vh-96px)] px-4 md:px-6 pb-6">
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto space-y-6">
           
           {/* Header */}
           <Card className="rounded-2xl border bg-card shadow-sm">
             <CardHeader className="pb-4">
               <CardTitle className="text-2xl font-bold text-foreground flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-primary" />
+                  <Calendar className="w-5 h-5 text-primary" />
                 </div>
-                SOIC – Quick Tap
+                SOIC – Sistema Orçamentário Inteligente ClIII
               </CardTitle>
-              <p className="text-muted-foreground">Registre seus gastos em menos de 5 segundos</p>
+              <p className="text-muted-foreground">Controle de gastos em formato de planilha financeira</p>
             </CardHeader>
           </Card>
 
-          {/* Formulário Principal */}
-          <Card className="rounded-2xl border bg-card shadow-sm">
-            <CardContent className="p-6 space-y-6">
-              
-              {/* Campo Descrição */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Descrição</label>
-                <Input
-                  placeholder="Ex: Almoço no restaurante..."
-                  value={descricao}
-                  onChange={(e) => setDescricao(e.target.value)}
-                  className="h-12 text-base"
-                />
-                {categoriaSugerida && (
-                  <p className="text-sm text-muted-foreground">
-                    Sugestão automática: <span className="text-primary font-medium">{categoriaSugerida}</span>
-                  </p>
-                )}
-              </div>
-
-              {/* Botões Rápidos */}
-              <div className="space-y-3">
-                <label className="text-sm font-medium text-foreground">Atalhos Rápidos</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {quickButtons.map((button, index) => {
-                    const IconComponent = button.icon;
-                    return (
-                      <Button
-                        key={index}
-                        variant="outline"
-                        className="h-20 flex flex-col gap-2 p-3 rounded-xl border-2 hover:border-primary/50 hover:bg-primary/5 transition-all"
-                        onClick={() => handleQuickButton(button)}
-                      >
-                        <IconComponent className="w-5 h-5 text-muted-foreground" />
-                        <span className="text-xs font-medium">{button.label}</span>
-                      </Button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Campo Valor */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Valor</label>
-                <Input
-                  type="number"
-                  placeholder="R$ 0,00"
-                  value={valor}
-                  onChange={(e) => setValor(e.target.value)}
-                  className="h-12 text-base"
-                  step="0.01"
-                />
-              </div>
-
-              {/* Chips de Categoria */}
-              <div className="space-y-3">
-                <label className="text-sm font-medium text-foreground">Categoria</label>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => {
-                    const IconComponent = category.icon;
-                    const isSelected = categoriaSelecionada === category.name;
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            {/* Main Spreadsheet Area */}
+            <div className="lg:col-span-3">
+              <Card className="rounded-2xl border bg-card shadow-sm">
+                <CardHeader className="pb-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     
+                    {/* Time Filter Controls */}
+                    <div className="flex items-center gap-3">
+                      <Button variant="outline" size="sm" onClick={() => navigateWeek('prev')}>
+                        <ChevronLeft className="w-4 h-4" />
+                      </Button>
+                      
+                      <Select value={timeFilter} onValueChange={setTimeFilter}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="week">Última semana</SelectItem>
+                          <SelectItem value="2weeks">2 semanas</SelectItem>
+                          <SelectItem value="month">Mês atual</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      
+                      <Button variant="outline" size="sm" onClick={() => navigateWeek('next')}>
+                        <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+
+                    {/* Category Filter */}
+                    <div className="flex items-center gap-2">
+                      <Filter className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Filtrar categorias</span>
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="p-0">
+                  <ScrollArea className="w-full">
+                    <div className="min-w-[800px]">
+                      
+                      {/* Table Header */}
+                      <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(100px,1fr))] border-b bg-muted/30">
+                        <div className="p-3 font-medium text-sm">Categoria / Subcategoria</div>
+                        {days.map((day, index) => (
+                          <div key={index} className="p-3 text-center font-medium text-sm border-l">
+                            {formatDate(day)}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Table Body */}
+                      {categories.map((category) => (
+                        <div key={category.name}>
+                          
+                          {/* Category Row */}
+                          <div className="grid grid-cols-[200px_repeat(auto-fit,minmax(100px,1fr))] border-b hover:bg-muted/20">
+                            <div 
+                              className="p-3 flex items-center gap-2 cursor-pointer font-medium bg-muted/50"
+                              onClick={() => toggleCategory(category.name)}
+                            >
+                              <category.icon className="w-4 h-4" />
+                              <span>{category.name}</span>
+                              {category.expanded ? 
+                                <ChevronUp className="w-4 h-4 ml-auto" /> : 
+                                <ChevronDown className="w-4 h-4 ml-auto" />
+                              }
+                            </div>
+                            {days.map((day, index) => {
+                              const dayTotal = category.subcategories.reduce((sum, sub) => 
+                                sum + getDayTotal(category.name, sub, day), 0);
+                              return (
+                                <div key={index} className="p-3 text-center border-l bg-muted/50">
+                                  {dayTotal > 0 && (
+                                    <span className="text-sm font-medium">
+                                      R$ {dayTotal.toFixed(0)}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Subcategory Rows */}
+                          {category.expanded && category.subcategories.map((subcategory) => (
+                            <div key={subcategory} className="grid grid-cols-[200px_repeat(auto-fit,minmax(100px,1fr))] border-b hover:bg-muted/10">
+                              <div className="p-3 pl-8 text-sm text-muted-foreground">
+                                {subcategory}
+                              </div>
+                              {days.map((day, index) => {
+                                const dayTotal = getDayTotal(category.name, subcategory, day);
+                                return (
+                                  <div key={index} className="p-2 border-l">
+                                    <Input
+                                      type="number"
+                                      placeholder="0"
+                                      className="h-8 text-center text-sm"
+                                      onBlur={(e) => {
+                                        if (e.target.value) {
+                                          handleExpenseInput(category.name, subcategory, day, e.target.value);
+                                          e.target.value = '';
+                                        }
+                                      }}
+                                      onKeyPress={(e) => {
+                                        if (e.key === 'Enter') {
+                                          const target = e.target as HTMLInputElement;
+                                          if (target.value) {
+                                            handleExpenseInput(category.name, subcategory, day, target.value);
+                                            target.value = '';
+                                          }
+                                        }
+                                      }}
+                                    />
+                                    {dayTotal > 0 && (
+                                      <div className="text-xs text-center mt-1 text-muted-foreground">
+                                        R$ {dayTotal.toFixed(2)}
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Side Panel */}
+            <div className="lg:col-span-1">
+              <Card className="rounded-2xl border bg-card shadow-sm sticky top-6">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold">Resumo por Categoria</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {categories.map((category) => {
+                    const stats = getCategoryStats(category.name);
                     return (
-                      <Badge
-                        key={category.name}
-                        variant={isSelected ? "default" : "secondary"}
-                        className={`cursor-pointer px-3 py-2 rounded-lg border transition-all hover:scale-105 ${
-                          isSelected 
-                            ? "bg-primary text-primary-foreground border-primary" 
-                            : "bg-background hover:bg-muted border-border"
-                        }`}
-                        onClick={() => setCategoriaSelecionada(category.name)}
-                      >
-                        <IconComponent className="w-3 h-3 mr-1" />
-                        {category.name}
-                      </Badge>
+                      <div key={category.name} className="p-4 rounded-lg border bg-muted/20">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <category.icon className="w-4 h-4" />
+                            <span className="font-medium text-sm">{category.name}</span>
+                          </div>
+                          {getStatusIcon(stats.status)}
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-xs">
+                            <span>Gasto:</span>
+                            <span className="font-medium">R$ {stats.total.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between text-xs">
+                            <span>Meta:</span>
+                            <span>R$ {category.meta.toFixed(2)}</span>
+                          </div>
+                          
+                          {/* Progress Bar */}
+                          <div className="w-full bg-muted rounded-full h-2">
+                            <div 
+                              className={`h-2 rounded-full transition-all ${
+                                stats.status === 'danger' ? 'bg-red-500' :
+                                stats.status === 'warning' ? 'bg-yellow-500' : 'bg-green-500'
+                              }`}
+                              style={{ width: `${Math.min(stats.percentage, 100)}%` }}
+                            />
+                          </div>
+                          
+                          <div className="flex justify-between text-xs">
+                            <span>{stats.percentage.toFixed(1)}% usado</span>
+                            <span className="font-medium">
+                              R$ {(category.meta - stats.total).toFixed(2)} restante
+                            </span>
+                          </div>
+                          
+                          {stats.status !== 'ok' && (
+                            <p className={`text-xs ${
+                              stats.status === 'danger' ? 'text-red-600' : 'text-yellow-600'
+                            }`}>
+                              {stats.status === 'danger' 
+                                ? '⚠️ Meta ultrapassada!' 
+                                : '⚠️ Atenção: 80% da meta atingida'
+                              }
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     );
                   })}
-                </div>
-              </div>
-
-              {/* Botão Salvar */}
-              <Button
-                onClick={handleSalvar}
-                className="w-full h-14 text-lg font-semibold rounded-xl bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 transition-all"
-                disabled={!descricao || !valor || !categoriaSelecionada}
-              >
-                Salvar Lançamento
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Lançamentos Recentes */}
-          {lancamentos.length > 0 && (
-            <Card className="rounded-2xl border bg-card shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">Lançamentos Recentes</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {lancamentos.map((lancamento) => {
-                  const IconComponent = getCategoryIcon(lancamento.categoria);
-                  return (
-                    <div
-                      key={lancamento.id}
-                      className="flex items-center justify-between p-4 rounded-xl bg-muted/30 border border-border/50"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <IconComponent className="w-5 h-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-foreground">{lancamento.descricao}</p>
-                          <p className="text-sm text-muted-foreground">{lancamento.categoria}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-destructive">
-                          -R$ {lancamento.valor.toFixed(2).replace(".", ",")}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {lancamento.data.toLocaleTimeString('pt-BR', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-          )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </Layout>
